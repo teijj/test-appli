@@ -33,49 +33,6 @@ settingsModal.addEventListener('click', function(e) {
   }
 });
 
-// 1. Déclaration des variables de mode
-let currentMode = 'draw'; // 'draw' ou 'panzoom'
-
-const drawModeBtn = document.getElementById('drawModeBtn');
-const panZoomModeBtn = document.getElementById('panZoomModeBtn');
-const modeSelector = document.getElementById('modeSelector');
-
-// 2. Afficher la barre de mode lors du chargement d'une photo
-// (Ajoutez cette ligne dans votre fonction displayImage)
-modeSelector.style.display = 'flex';
-
-// 3. Gestion du changement de mode via les boutons
-drawModeBtn.addEventListener('click', () => {
-  currentMode = 'draw';
-  drawModeBtn.classList.add('active');
-  panZoomModeBtn.classList.remove('active');
-  canvas.style.touchAction = 'none'; // Bloque le zoom du navigateur pour dessiner proprement
-});
-
-panZoomModeBtn.addEventListener('click', () => {
-  currentMode = 'panzoom';
-  panZoomModeBtn.classList.add('active');
-  drawModeBtn.classList.remove('active');
-  canvas.style.touchAction = 'manipulation'; // Réautorise les gestes de pincement et défilement
-});
-
-// 4. Bloquer le dessin si nous ne sommes pas en mode 'draw'
-function startDrawing(e) {
-  if (currentMode !== 'draw') return; // Annule le tracé si on est en mode Zoom/Pan
-  isDrawing = true;
-  const pos = getCoords(e);
-  ctx.beginPath();
-  ctx.moveTo(pos.x, pos.y);
-}
-
-function draw(e) {
-  if (!isDrawing || currentMode !== 'draw') return;
-  e.preventDefault();
-
-  const pos = getCoords(e);
-  ctx.lineTo(pos.x, pos.y);
-  ctx.stroke();
-}
 
 // 2. Écouter la prise de photo
 cameraInput.addEventListener('change', function (e) {
@@ -247,6 +204,50 @@ colorDots.forEach(dot => {
     ctx.strokeStyle = currentColor;
   });
 });
+
+// 1. Déclaration des variables de mode
+let currentMode = 'panzoom'; // 'draw' ou 'panzoom'
+
+const drawModeBtn = document.getElementById('drawModeBtn');
+const panZoomModeBtn = document.getElementById('panZoomModeBtn');
+const modeSelector = document.getElementById('modeSelector');
+
+// 2. Afficher la barre de mode lors du chargement d'une photo
+// (Ajoutez cette ligne dans votre fonction displayImage)
+modeSelector.style.display = 'flex';
+
+// 3. Gestion du changement de mode via les boutons
+drawModeBtn.addEventListener('click', () => {
+  currentMode = 'draw';
+  drawModeBtn.classList.add('active');
+  panZoomModeBtn.classList.remove('active');
+  canvas.style.touchAction = 'none'; // Bloque le zoom du navigateur pour dessiner proprement
+});
+
+panZoomModeBtn.addEventListener('click', () => {
+  currentMode = 'panzoom';
+  panZoomModeBtn.classList.add('active');
+  drawModeBtn.classList.remove('active');
+  canvas.style.touchAction = 'manipulation'; // Réautorise les gestes de pincement et défilement
+});
+
+// 4. Bloquer le dessin si nous ne sommes pas en mode 'draw'
+function startDrawing(e) {
+  if (currentMode !== 'draw') return; // Annule le tracé si on est en mode Zoom/Pan
+  isDrawing = true;
+  const pos = getCoords(e);
+  ctx.beginPath();
+  ctx.moveTo(pos.x, pos.y);
+}
+
+function draw(e) {
+  if (!isDrawing || currentMode !== 'draw') return;
+  e.preventDefault();
+
+  const pos = getCoords(e);
+  ctx.lineTo(pos.x, pos.y);
+  ctx.stroke();
+}
 
 
 
