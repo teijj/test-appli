@@ -1,0 +1,101 @@
+/* Réinitialisation et styles généraux */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  touch-action: manipulation; /* Optimise la réactivité tactile sur mobile */
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #f4f6f8;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Occupe tout l'écran */
+  overflow: hidden; /* Évite les défilements intempestifs */
+}
+
+/* En-tête */
+.app-header {
+  background-color: #2c3e50;
+  color: #ffffff;
+  text-align: center;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.app-header h1 {
+  font-size: 1.2rem;
+}
+
+/* Zone centrale */
+.app-body {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.photo-container {
+  width: 100%;
+  height: 100%;
+  max-width: 500px;
+  background-color: #ffffff;
+  border: 2px dashed #bdc3c7;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Texte quand aucune photo n'est chargée */
+.placeholder-text {
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Le Canvas où s'affichera la photo et le tracé */
+#listCanvas {
+  display: none;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Barre d'actions en bas */
+.app-footer {
+  background-color: #ffffff;
+  padding: 15px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* Boutons */
+.btn {
+  display: inline-block;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #e74c3c;
+  color: white;
+}
