@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Ma Liste Photo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- En-tête -->
+  <header class="app-header">
+    <h1>Ma Liste Photo</h1>
+  </header>
+
+  <!-- Zone de travail principale -->
+  <main class="app-body">
+    <!-- Zone d'affichage et de dessin -->
+    <div class="photo-container" id="photoContainer">
+      <canvas id="listCanvas"></canvas>
+      <p class="placeholder-text" id="placeholderText">
+        Prends une photo de ta liste pour commencer
+      </p>
+    </div>
+  </main>
+
+  <!-- Barre d'actions en bas -->
+  <footer class="app-footer">
+    <!-- Bouton pour déclencher la caméra du téléphone -->
+    <label for="cameraInput" class="btn btn-primary">
+      📷 Prendre une photo
+    </label>
+    <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden>
+
+    <!-- Bouton pour effacer le trait en cas d'erreur (masqué au début) -->
+    <button id="clearBtn" class="btn btn-secondary" style="display: none;">
+      🗑️ Réinitialiser
+    </button>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
