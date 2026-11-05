@@ -30,15 +30,24 @@
   <footer class="app-footer">
     <!-- Bouton pour déclencher la caméra du téléphone -->
     <label for="cameraInput" class="btn btn-primary">
-      📷 Prendre une photo
+      📷 photo
     </label>
     <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden>
-
-    <!-- Bouton pour effacer le trait en cas d'erreur (masqué au début) -->
+    <!-- Bouton Annuler (Retour en arrière) - masqué au début -->
+    <button id="undoBtn" class="btn btn-warning" style="display: none;">
+      ↩️ Annuler
+    </button>
+    <!-- Bouton pour effacer tout (masqué au début) -->
     <button id="clearBtn" class="btn btn-secondary" style="display: none;">
       🗑️ Réinitialiser
     </button>
   </footer>
+
+  <!-- Barre de sélection des modes (masquée tant qu'aucune photo n'est chargée) -->
+    <div class="mode-selector" id="modeSelector" style="display: none;">
+        <button id="drawModeBtn" class="btn-mode active">✏️ Dessiner</button>
+        <button id="panZoomModeBtn" class="btn-mode">🔍 Zoomer / Bouger</button>
+    </div>
 
     <!-- Panneau des paramètres (masqué par défaut) -->
     <div id="settingsModal" class="modal" style="display: none;">
@@ -71,7 +80,6 @@
             </div>
         </div>
     </div>
-
 
   <script src="script.js"></script>
 </body>

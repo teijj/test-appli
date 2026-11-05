@@ -9,10 +9,12 @@ const sizeValueSpan = document.getElementById('sizeValue');
 const settingsBtn = document.getElementById('settingsBtn');
 const settingsModal = document.getElementById('settingsModal');
 const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+const undoBtn = document.getElementById('undoBtn');
 
 let isDrawing = false;
 let currentImage = null; // Stocke l'image originale
 let currentColor = '#070100'; // noir par défaut
+let history = []; // Tableau pour stocker l'historique des dessins
 
 // Ouvrir les paramètres
 settingsBtn.addEventListener('click', function() {
@@ -30,6 +32,50 @@ settingsModal.addEventListener('click', function(e) {
     settingsModal.style.display = 'none';
   }
 });
+
+// 1. Déclaration des variables de mode
+let currentMode = 'draw'; // 'draw' ou 'panzoom'
+
+const drawModeBtn = document.getElementById('drawModeBtn');
+const panZoomModeBtn = document.getElementById('panZoomModeBtn');
+const modeSelector = document.getElementById('modeSelector');
+
+// 2. Afficher la barre de mode lors du chargement d'une photo
+// (Ajoutez cette ligne dans votre fonction displayImage)
+modeSelector.style.display = 'flex';
+
+// 3. Gestion du changement de mode via les boutons
+drawModeBtn.addEventListener('click', () => {
+  currentMode = 'draw';
+  drawModeBtn.classList.add('active');
+  panZoomModeBtn.classList.remove('active');
+  canvas.style.touchAction = 'none'; // Bloque le zoom du navigateur pour dessiner proprement
+});
+
+panZoomModeBtn.addEventListener('click', () => {
+  currentMode = 'panzoom';
+  panZoomModeBtn.classList.add('active');
+  drawModeBtn.classList.remove('active');
+  canvas.style.touchAction = 'manipulation'; // Réautorise les gestes de pincement et défilement
+});
+
+// 4. Bloquer le dessin si nous ne sommes pas en mode 'draw'
+function startDrawing(e) {
+  if (currentMode !== 'draw') return; // Annule le tracé si on est en mode Zoom/Pan
+  isDrawing = true;
+  const pos = getCoords(e);
+  ctx.beginPath();
+  ctx.moveTo(pos.x, pos.y);
+}
+
+function draw(e) {
+  if (!isDrawing || currentMode !== 'draw') return;
+  e.preventDefault();
+
+  const pos = getCoords(e);
+  ctx.lineTo(pos.x, pos.y);
+  ctx.stroke();
+}
 
 // 2. Écouter la prise de photo
 cameraInput.addEventListener('change', function (e) {
@@ -56,6 +102,7 @@ function displayImage(img) {
   placeholderText.style.display = 'none';
   canvas.style.display = 'block';
   clearBtn.style.display = 'inline-block';
+  undoBtn.style.display = 'inline-block'; // Afficher le bouton Annuler
 
   // Obtenir la taille disponible dans le conteneur
   const container = canvas.parentElement;
@@ -91,7 +138,10 @@ function displayImage(img) {
   // Redessiner l'image
   ctx.drawImage(img, 0, 0, renderWidth, renderHeight);
 
-  // Reconfigurer le pinceau après le redimensionnement
+  // Sauvegarder l'état initial (photo propre) dans l'historique
+  history = [];
+  saveState();
+
   ctx.strokeStyle = currentColor;
   ctx.lineWidth = brushSizeInput.value;
   ctx.lineCap = 'round';
@@ -103,6 +153,7 @@ brushSizeInput.addEventListener('input', function () {
   ctx.lineWidth = size;
   sizeValueSpan.textContent = size + 'px';
 });
+
 
 // Calcul ultra-précis du point de contact au doigt
 function getCoords(e) {
@@ -139,7 +190,15 @@ function draw(e) {
 }
 
 function stopDrawing() {
-  isDrawing = false;
+  if (isDrawing) {
+    isDrawing = false;
+    saveState(); // Sauvegarde l'étape juste après avoir fini de tracer
+  }
+}
+
+// Sauvegarder l'état actuel du canvas dans l'historique
+function saveState() {
+  history.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
 }
 
 // Événements Tactiles (Smartphones / Tablettes)
@@ -157,7 +216,18 @@ canvas.addEventListener('mouseleave', stopDrawing);
 clearBtn.addEventListener('click', function () {
   if (currentImage) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(currentImage, 0, 0, parseFloat(canvas.style.width), parseFloat(canvas.style.height));
+    history = [];
+    saveState(); // Repartir d'une feuille propre
+  }
+});
+
+// Fonction pour annuler le dernier trait
+undoBtn.addEventListener('click', function () {
+  if (history.length > 1) {
+    history.pop(); // Retire le dernier état
+    const previousState = history[history.length - 1]; // Récupère l'état d'avant
+    ctx.putImageData(previousState, 0, 0);
   }
 });
 
@@ -177,3 +247,7 @@ colorDots.forEach(dot => {
     ctx.strokeStyle = currentColor;
   });
 });
+
+
+
+
