@@ -206,7 +206,7 @@ colorDots.forEach(dot => {
 });
 
 // 1. Déclaration des variables de mode
-let currentMode = 'panzoom'; // 'draw' ou 'panzoom'
+let currentMode = 'draw'; // 'draw' ou 'panzoom'
 
 const drawModeBtn = document.getElementById('drawModeBtn');
 const panZoomModeBtn = document.getElementById('panZoomModeBtn');
@@ -225,7 +225,7 @@ drawModeBtn.addEventListener('click', () => {
 });
 
 panZoomModeBtn.addEventListener('click', () => {
-  currentMode = 'panzoom';
+  currentMode = 'draw';
   panZoomModeBtn.classList.add('active');
   drawModeBtn.classList.remove('active');
   canvas.style.touchAction = 'manipulation'; // Réautorise les gestes de pincement et défilement
