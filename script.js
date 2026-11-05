@@ -51,7 +51,7 @@ function displayImage(img) {
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
   // Configuration par défaut du trait de crayon
-  ctx.strokeStyle = '#e74c3c'; // Rouge
+  ctx.strokeStyle = '#000000'; // Rouge
   ctx.lineWidth = 6;            // Épaisseur du trait
   ctx.lineCap = 'round';        // Bouts arrondis
   ctx.lineJoin = 'round';
