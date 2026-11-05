@@ -4,9 +4,32 @@ const canvas = document.getElementById('listCanvas');
 const ctx = canvas.getContext('2d');
 const placeholderText = document.getElementById('placeholderText');
 const clearBtn = document.getElementById('clearBtn');
+const brushSizeInput = document.getElementById('brushSize');
+const sizeValueSpan = document.getElementById('sizeValue');
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsModal = document.getElementById('settingsModal');
+const closeSettingsBtn = document.getElementById('closeSettingsBtn');
 
 let isDrawing = false;
 let currentImage = null; // Stocke l'image originale
+let currentColor = '#070100'; // noir par défaut
+
+// Ouvrir les paramètres
+settingsBtn.addEventListener('click', function() {
+  settingsModal.style.display = 'flex';
+});
+
+// Fermer les paramètres via la croix
+closeSettingsBtn.addEventListener('click', function() {
+  settingsModal.style.display = 'none';
+});
+
+// Fermer aussi si on clique en dehors de la boîte blanche
+settingsModal.addEventListener('click', function(e) {
+  if (e.target === settingsModal) {
+    settingsModal.style.display = 'none';
+  }
+});
 
 // 2. Écouter la prise de photo
 cameraInput.addEventListener('change', function (e) {
@@ -36,40 +59,68 @@ function displayImage(img) {
 
   // Obtenir la taille disponible dans le conteneur
   const container = canvas.parentElement;
-  const maxWidth = container.clientWidth;
-  const maxHeight = container.clientHeight;
+  const containerWidth = container.clientWidth - 10;
+  const containerHeight = container.clientHeight - 10;
 
-  // Calculer le ratio pour adapter la photo sans la déformer
-  let width = img.width;
-  let height = img.height;
+  // Calcul des proportions
+  const imgRatio = img.width / img.height;
+  const containerRatio = containerWidth / containerHeight;
 
-  const ratio = Math.min(maxWidth / width, maxHeight / height);
-  canvas.width = width * ratio;
-  canvas.height = height * ratio;
+  let renderWidth, renderHeight;
 
-  // Dessiner l'image sur le Canvas
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  if (imgRatio > containerRatio) {
+    renderWidth = containerWidth;
+    renderHeight = containerWidth / imgRatio;
+  } else {
+    renderHeight = containerHeight;
+    renderWidth = containerHeight * imgRatio;
+  }
 
-  // Configuration par défaut du trait de crayon
-  ctx.strokeStyle = '#000000'; // Rouge
-  ctx.lineWidth = 6;            // Épaisseur du trait
-  ctx.lineCap = 'round';        // Bouts arrondis
+  // Prise en compte de la densité de pixels du smartphone (Retina / OLED)
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = renderWidth * dpr;
+  canvas.height = renderHeight * dpr;
+
+  // Ajustement de la taille d'affichage CSS
+  canvas.style.width = renderWidth + 'px';
+  canvas.style.height = renderHeight + 'px';
+
+  // Mise à l'échelle du contexte pour garder des traits nets
+  ctx.scale(dpr, dpr);
+
+  // Redessiner l'image
+  ctx.drawImage(img, 0, 0, renderWidth, renderHeight);
+
+  // Reconfigurer le pinceau après le redimensionnement
+  ctx.strokeStyle = currentColor;
+  ctx.lineWidth = brushSizeInput.value;
+  ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 }
 
-// 4. Gestion du tracé au doigt (ou à la souris)
+brushSizeInput.addEventListener('input', function () {
+  const size = brushSizeInput.value;
+  ctx.lineWidth = size;
+  sizeValueSpan.textContent = size + 'px';
+});
 
-// Obtenir la position exacte du contact tactile ou du curseur
+// Calcul ultra-précis du point de contact au doigt
 function getCoords(e) {
   const rect = canvas.getBoundingClientRect();
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-  
+  const touch = e.touches ? e.touches[0] : e;
+
   return {
-    x: clientX - rect.left,
-    y: clientY - rect.top
+    x: touch.clientX - rect.left,
+    y: touch.clientY - rect.top
   };
 }
+
+// Redimensionnement automatique si le téléphone tourne ou change de taille
+window.addEventListener('resize', () => {
+  if (currentImage) {
+    displayImage(currentImage);
+  }
+});
 
 function startDrawing(e) {
   isDrawing = true;
@@ -108,4 +159,21 @@ clearBtn.addEventListener('click', function () {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
   }
+});
+
+// Gestion de la palette de couleurs
+const colorDots = document.querySelectorAll('.color-dot');
+
+colorDots.forEach(dot => {
+  dot.addEventListener('click', function () {
+    // Retirer la classe 'active' de toutes les pastilles
+    colorDots.forEach(d => d.classList.remove('active'));
+    
+    // Ajouter la classe 'active' sur la pastille cliquée
+    this.classList.add('active');
+    
+    // Mettre à jour la couleur du pinceau
+    currentColor = this.getAttribute('data-color');
+    ctx.strokeStyle = currentColor;
+  });
 });

@@ -12,6 +12,7 @@
   <!-- En-tête -->
   <header class="app-header">
     <h1>Ma Liste Photo</h1>
+    <button id="settingsBtn" class="btn-icon" aria-label="Paramètres">⚙️</button>
   </header>
 
   <!-- Zone de travail principale -->
@@ -38,6 +39,39 @@
       🗑️ Réinitialiser
     </button>
   </footer>
+
+    <!-- Panneau des paramètres (masqué par défaut) -->
+    <div id="settingsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Paramètres</h2>
+                <button id="closeSettingsBtn" class="btn-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Option 1 : Taille du trait (qu'on déplace ici pour faire propre) -->
+                <div class="setting-item">
+                    <label for="brushSize">Épaisseur du trait :</label>
+                    <div class="setting-control">
+                        <input type="range" id="brushSize" min="2" max="20" value="6">
+                        <span id="sizeValue">6 %</span>
+                    </div>
+                </div>
+                <!-- Option 2 : Couleur du trait -->
+                <div class="setting-item">
+                    <label>Couleur du trait :</label>
+                    <div class="color-palette" id="colorPalette">
+                        <button class="color-dot active" data-color="#e74c3c" style="background-color: #e74c3c;" aria-label="Rouge"></button>
+                        <button class="color-dot" data-color="#000000" style="background-color: #000000;" aria-label="Noir"></button>
+                        <button class="color-dot" data-color="#ffffff" style="background-color: #ffffff; border: 1px solid #ccc;" aria-label="Blanc"></button>
+                        <button class="color-dot" data-color="#2ecc71" style="background-color: #2ecc71;" aria-label="Vert"></button>
+                        <button class="color-dot" data-color="#f1c40f" style="background-color: #f1c40f;" aria-label="Jaune"></button>
+                    </div>
+                </div>
+                <!-- D'autres options pourront être ajoutées ici facilement plus tard -->
+            </div>
+        </div>
+    </div>
+
 
   <script src="script.js"></script>
 </body>
